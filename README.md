@@ -605,14 +605,612 @@ Thirdly, the PHP Server Side script checks to ensure that the file size is withi
 
 And finally, a specific Computed UNIQUE column is implemented at the PHP Server Side Code level and at the Database table level to ensure that duplicates are eliminated during database storage.
 
-The Codes are available using the following links
-a.	js/jquery-1.11.1.js
-b.	js/js.js
-c.	asset/process.csvupload.php
-d.	css/css.css
-e.	./index.php
-f.	asset/PointLevelGeoCoding20160621v2.csv
 
-Download all the files [here](#).
+###All The Codes
+
+------
+The following below are all the codes used in this solution. The file structure is as follows
+
+```
+js
+  /jquery-1.11.1.js
+  /js.js
+asset
+  /process.csvupload.php
+  /PointLevelGeoCoding20160621v2.csv
+
+img
+  /loading.gif
+
+css
+  /css.css
+```
+##**The JQuery Javascript File**
+The JQuery file can be downloaded from the JQuery Download Page.
+
+##**The User Interface HTML Page index.php**
+```
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+
+<title>Geo-coding CSV Data File Reader</title>
+
+<link rel="stylesheet" type="text/css" href="css/css.css">
+
+<script language="javascript" src="js/jquery-1.11.1.js"></script>
+<script language="javascript" src="js/js.js"></script>
+
+</head>
+
+<body>
+	<div class="hdr">
+		Geo-coding CSV Data File Reader	
+	</div>
+	
+	
+	<form id="iform" class="file_paragraph" action="" method="post" enctype="multipart/form-data" onsubmit="HandleUpload(event);">
+		<table width="600" border="0" align="center" cellpadding="5" cellspacing="0">
+			<tr>
+				<td style="width:360px;"></td>
+				<td>&nbsp;</td>
+			</tr>
+		  
+			<tr class="file_row">
+				<td align="left" valign="middle"  class="upload_title" id="selected-file">
+					<span id="file_title">Select CSV File to Upload</span>
+				</td>
+				<td align="right" valign="middle">
+					<input id="csv_file" class="csv_file" type="file" name="files[]" multiple="multiple" accept=".csv" /> 
+					<input type="submit" name="Submit" value="Upload" />
+				</td>
+			</tr>
+			<tr>
+				<td width="363"></td>
+				<td width="217">&nbsp;</td>
+			</tr>
+		</table>
+	</form>
+	
+	<p>
+		<div id="" class="">
+			<div class="iprogress" id="iprogress">
+				<img src="img/loading.gif" />
+			</div>
+			<div id="tbl_data" class="tbl_data">
+				
+			</div>
+		</div>
+	</p>
+
+</body>
+</html>
+
+```
+##**The PHP Upload Page process.csvupload.php**
+
+```
+<?php
+//CROSS DOMAIN REQUEST ACCESS CONTROL
+header('Access-Control-Allow-Origin: *');
+error_reporting(0);
+//********************************************
+//********************************************
+
+
+
+//FORMATS OF THE UPLOAD FILE
+$valid_formats = array("csv");
+$max_file_size = 1024*100000; //100 kb
+//********************************************
+//********************************************
+
+$message = "";
+
+//HANDLE FILE UPLOAD
+if(isset($_POST) and $_SERVER['REQUEST_METHOD'] == "POST"){
+	// Loop $_FILES to exeicute all files
+	foreach ($_FILES['files']['name'] as $f => $name) {     
+	    if ($_FILES['files']['error'][$f] == 4) {
+	        continue; // Skip file if any error found
+	    }	       
+	    if ($_FILES['files']['error'][$f] == 0) {	           
+	        if ($_FILES['files']['size'][$f] > $max_file_size) {
+	            $message = "$name is too large!.";
+	            continue; // Skip large files
+	        }
+			elseif( !in_array(pathinfo($name, PATHINFO_EXTENSION), $valid_formats) ){
+				$message = "$name is not a valid format";
+				continue; // Skip invalid file formats
+			}
+	        else{ 
+				// No error found! Store in Database 
+				$file = fopen($_FILES["files"]["tmp_name"][$f],"r");
+		
+				$datar = DisplayData($file);
+				$iDat = array();
+				$iDat["data"]["status"] = "SUCCESS";
+				$iDat["data"]["data"] = $datar;
+				
+				InsertStmt($datar);
+	        }
+	    }
+		
+	}
+	
+	if($message != ""){
+		//IF ERROR
+		$iDat = array();
+		$iDat["data"]["status"] = "FAILED";
+		$iDat["data"]["data"] = $message;;
+		echo json_encode($iDat);
+		//************
+		//************
+	}else{		
+		//IF SUCCESS
+		echo json_encode($iDat);
+		//************
+		//************
+	}
+}else{
+	echo "hm";
+}
+//************
+//************
+
+
+function dbiConnect(){
+		$DBHOST  =  "localhost";
+		$DBUSER  =  "root";
+		$DBPASS  =  "";
+		$DBASE   =  "db_lux";
+		
+		$conn = new mysqli($DBHOST, $DBUSER, $DBPASS, $DBASE);
+		return $conn;
+}
+function InsertStmt($arr){
+	$len = count($arr);
+	
+	$conn = dbiConnect();
+	if ($conn->connect_error) {
+		die("Connection failed: " . $conn->connect_error);
+	}
+	
+	$sql = "insert into tbl_geo (place, latitude, longitude, lat_long_sum, street_number, street_name, address, municipal, city, state, postcode, country, iso31662, iso31662sub, geohash, signature, category) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+	
+	$stmt = $conn->prepare($sql);
+	
+	$stmt->bind_param("sdddsssssssssssss", $place, $latitude, $longitude, $lat_long_sum, $streetno, $streetname, $address, $municipal, $city, $state, $postcode, $country, $iso31662, $iso31662sub, $geohash, $signature, $category);
+	
+	for($i=0; $i<$len; $i++){
+		//make sure the header is not added
+		if($i>0){
+			$row = $arr[$i];
+			$place = $row["Place"];
+			$latitude = doubleval($row["Latitude"]);
+			$longitude = doubleval($row["Longitude"]);
+			$lat_long_sum = $latitude + $longitude;
+			$streetno = $row["StreetNo"];
+			$streetname = $row["StreetName"];
+			$address = $row["Address"];
+			$municipal = $row["Municipal"];
+			$city = $row["City"];
+			$state = $row["State"];
+			$postcode = $row["PostCode"];
+			$country = $row["Country"];
+			$iso31662 = $row["ISO3166_2"];
+			$iso31662sub = $row["ISO3166_2_SUB"];
+			$geohash = md5(serialize($row));
+			$signature = "BI." . strtoupper(substr(md5($geohash),0,8));
+			$category = $row["Category"];
+			
+			$stmt->execute();
+		
+		}
+	}
+	
+	
+	if(mysqli_error($conn) == ""){
+		$stmt->close();
+		$conn->close();
+		//echo "SUCCESS";
+	}else{
+		return mysqli_error($conn);
+	}
+	
+	
+}
+function DisplayData($file){
+	$row = array();
+	$count = 0;
+	while(!feof($file)){	
+		$file_row = fgetcsv($file);
+		if($file_row != null){
+		
+			$row[$count]["Place"] = $file_row[0];
+			$row[$count]["Latitude"] = $file_row[1];
+			$row[$count]["Longitude"] = $file_row[2];
+			$row[$count]["StreetNo"] = $file_row[3];
+			$row[$count]["StreetName"] = $file_row[4];
+			$row[$count]["Address"] = $file_row[5];
+			$row[$count]["Municipal"] = $file_row[6];
+			$row[$count]["City"] = $file_row[7];
+			$row[$count]["State"] = $file_row[8];
+			$row[$count]["PostCode"] = $file_row[9];
+			$row[$count]["Country"] = $file_row[10];
+			$row[$count]["ISO3166_2"] = $file_row[11];
+			$row[$count]["ISO3166_2_SUB"] = $file_row[12];
+			$row[$count]["Category"] = $file_row[13];
+		}
+	
+		$count++;
+	}
+	//$dat = DisplayTable($row);
+	//return $dat;
+	return $row;
+}
+function DisplayTable($row){
+	$num = count($row);
+	$tbl = "<table>";
+	for($i=0; $i<$num; $i++){
+		$tbl .= "<tr>";
+		$tbl .=	"<td>" . $row[$i]["Place"] . "</td>";	
+		$tbl .=	"<td>" . $row[$i]["Latitude"] . "</td>";		
+		$tbl .= "<tr>";
+	}
+	$tbl .= "</table>";
+	return $tbl;
+}
+/*function sendToDB($arr){
+	$len = count($arr);
+	$sql = "insert into tbl_geo (company_name,latitude,longitude,lat_long_sum,address,municipal,city,state,postcode,country,iso31662,iso31662sub,signature) values ";
+	
+	
+	
+	for($i=0; $i<$len; $i++){
+		if($i>0){
+			$row = $arr[$i];
+			$sql_ = "(";
+			$company = $row["Company"];
+			$latitude = doubleval($row["Latitude"]);
+			$longitude = doubleval($row["Longitude"]);
+			$lat_long_sum = $latitude + $longitude;
+			$address = $row["Address"];
+			$municipal = $row["Municipal"];
+			$city = $row["City"];
+			$state = $row["State"];
+			$postcode = $row["PostCode"];
+			$country = $row["Country"];
+			$iso31662 = $row["ISO3166_2"];
+			$iso31662sub = $row["ISO3166_2_SUB"];
+			$signature = "BI." . strtoupper(substr(md5($lat_long_sum),0,8));
+			//echo $signature;
+			$sql_ .= "'$company','$latitude','$longitude','$lat_long_sum','$address','$municipal','$city','$state','$postcode','$country','$iso31662','$iso31662sub','$signature'";
+			
+			$sql_ .= "),";
+		}
+		$sql .= $sql_;
+	}
+	
+	
+	
+	$sqlr = substr($sql,0,strlen($sql)-1);
+	
+	
+	$db = new DB();
+
+	$con = $db->dbConnect();
+	
+	$rs = $db->doQuery($sqlr);
+	
+	if($db->getError() == ""){
+		echo "SUCCESS";
+	}else{
+		echo $db->getError();
+	}
+	
+}*/
+?>
+```
+
+
+##**The Javascript File js.js**
+```
+// JavaScript Document
+
+var obj = {};
+obj.UploadURL = "asset/process.csvupload.php";
+obj.Upload = null;
+obj.Timeout = 15000;
+obj.Filename = "";
+
+$(document).ready(function(){
+
+	$('input[type="file"]').change(function(e){
+
+		var fileName = e.target.files[0].name;
+		obj.Filename = fileName;
+		$('#selected-file span').html(fileName);
+		
+	});
+	var fx = document.getElementById("csv_file");
+	
+	if(fx.value != ""){
+		obj.Filename = fx.value;
+		$('#selected-file span').html(fx.value);
+	}
+
+});
+
+obj.ajaxErrorHandler = function(jqXHR, exception){
+	
+	if (jqXHR.status === 0) {
+		
+		return GetError('Not connecting. Verify Network.', 'Error 0');
+	} else if (jqXHR.status == 404) {
+		return GetError('Requested page not found.', 'Error 404');
+	} else if (jqXHR.status == 500) {
+		return GetError('Internal Server Error.', 'Error 500');
+	} else if (exception === 'parsererror') {
+		return GetError('Requested JSON parse failed.', 'Parse Error');
+	} else if (exception === 'timeout') {
+		return GetError('Time out has occurred.', 'Time out Error');
+	} else if (exception === 'abort') {
+		return GetError('Request aborted.', 'Abort Error');
+	} else {
+		return GetError('Unknown error occurred, try again.', 'Uncaught Error');
+	}	
+	
+}
+obj.showProgress = function(){
+	$('#iprogress').css("display","block");	
+}
+obj.hideProgress = function(){
+	$('#iprogress').css("display","none");	
+}
+
+
+
+function GetError(info, title){
+	var error = {};
+	error.info = info;
+	error.title = title;
+	return error;
+}
+function HandleUpload(e){
+	
+	//PREVENT DEFAULT
+	var evt = null;
+	
+	if(e){		
+		evt = e;
+	}else{
+		evt = window.event;
+	}
+	evt.preventDefault();
+	//**********************************
+	//**********************************
+	
+	//SHOW PROGRESS
+	obj.showProgress();
+	//**********************************
+	//**********************************
+	
+	//CLEAR PREVIOUS DATA
+	$('#tbl_data').html('');
+	//**********************************
+	//**********************************
+	
+	//SET UPLOAD FILE URL
+	var url = obj.UploadURL;
+	//**********************************
+	//**********************************
+	
+	if( obj.Upload != null ) {
+			obj.Upload.abort();
+			obj.Upload = null;
+	}
+	//**********************************
+	//**********************************
+	
+	//GET THE FORM DATA OBJECT
+	var form = document.forms.namedItem("iform");
+	var formData = new FormData(form);
+	//**********************************
+	//**********************************
+	
+	//CHECK IF ANY FIELD IS EMPTY AND THEN SUBMIT
+	setTimeout(function(){
+		var length = iform.elements.length;
+			
+		var isEmpty = false;
+		
+		for(var i=0; i<length; i++){
+			if(iform.elements[i].value == ""){
+				isEmpty = true;		
+			}
+		}
+		if(isEmpty){
+			alert("Please select a file.");
+			return false;
+		}else{
+			 
+			
+			$('#selected-file span').html(obj.Filename);
+			
+			setTimeout(function(){
+				CallProcess(url, formData);
+			}, 1000);		
+		}
+		
+		
+	}, 10);
+	//**********************************
+	//**********************************
+	
+	
+		
+}
+function CallProcess(url, formData){
+		
+	obj.Upload = $.ajax({
+	
+		url: url,			
+		timeout: obj.Timeout,
+		data: formData,
+		type: 'POST',
+		async: false,
+		mimeType: "multipart/form-data",
+		contentType: false,
+		processData: false,
+		
+		beforeSend:function(data){
+			
+		},		
+		success:function(data){
+			var jsonData = $.parseJSON(data);
+			
+			
+			
+			if(jsonData.data.status == "SUCCESS"){
+				
+				DisplayData(jsonData.data.data);
+			}else{
+				var imsg 	= '<div style="text-align:center; font-size:14px; font-family:arial;">'; 
+				imsg		+= "Error: " + jsonData.data.data+ '</div>'
+				
+				$('#tbl_data').html(imsg);
+				obj.hideProgress();
+				
+			}
+		},
+		
+		error:function(jqXHR, exception){
+			
+			var error = obj.ajaxErrorHandler(jqXHR, exception);
+			setTimeout(function(){
+				var imsg 	= '<div style="text-align:center; font-size:14px; font-family:arial;">'; 
+				imsg		+= error.title + ": " + error.info + '</div>'
+				
+				$('#tbl_data').html(imsg);
+				obj.hideProgress();
+			},200);
+			
+			
+		}
+	});	
+}
+function DisplayData(data){
+	var num = data.length;
+	var tbl = "<div style='font-family:arial; font-size:12px; margin-bottom:10px; margin-top:-5px; border-bottom:1px solid rgba(0,0,0,0.3); padding:0px 10px 10px 10px;'><strong>Note:</strong> All duplicates will be ignored when stored in the database</div>";
+	tbl += "<table border='0' width='100%'>";
+	var row_style = "";
+	
+	for(var i=0; i<num; i++){
+		if(i == 0){
+			row_style = "style='font-weight:bold'";	
+		}else{
+			row_style = "";	
+		}
+		tbl += "<tr " + row_style + ">";
+		tbl += "	<td>" + (data[i].Place) + "</td>";
+		tbl += "	<td>" + (data[i].Latitude) + "</td>";
+		tbl += "	<td>" + (data[i].Longitude) + "</td>";
+		tbl += "	<td>" + (data[i].Address) + "</td>";
+		tbl += "	<td>" + (data[i].Municipal) + "</td>";
+		tbl += "	<td>" + (data[i].City) + "</td>";
+		tbl += "	<td>" + (data[i].State) + "</td>";
+		tbl += "	<td>" + (data[i].Country) + "</td>";
+		tbl += "</tr>";
+		//alert(data[i].Place);	
+		
+	}
+	tbl += "<table>";
+	
+	$('#tbl_data').html(tbl);
+	obj.hideProgress();
+	
+	
+}
+```
+
+
+##**The CSS File css.css**
+```
+/* CSS Document */
+body{
+	margin:0px;
+}
+
+.hdr{
+	background:#003366;
+	color:white;
+	font-size:22px; 
+	font-weight:normal;
+	font-family:verdana;
+	padding:10px;
+}
+
+.csv_file{
+	font-size:12px;
+	font-family:arial;
+	width:78px;
+}
+.upload_title{
+	font-size:14px; 
+	font-family:arial;
+	
+	
+}
+.file_row{
+	background: rgba(0,0,0,0.05);
+}
+.file_row td{
+	padding:10px;
+	color:arial;
+}
+
+.file_paragraph{
+	border-bottom:3px #003366 solid;
+}
+
+.tbl_data{
+	
+}
+.tbl_data table{
+	
+}
+.tbl_data td{
+	border-bottom:1px solid #ccc;
+	font-size:12px;
+	font-family:arial;
+	padding:5px 2px 5px 2px;
+}
+.iprogress{
+	display:none;
+	font-family:arial; 
+	font-size:12px;
+	text-align:center;
+}
+.iprogress img{
+	width:100px;
+}
+```
+
+##**The Geocoded File**
+```
+Company,Latitude,Longitude,Street No,Street Name,Address,Municipal,City,State,Post Code,Country,ISO3166-2,ISO3166-2-SUB,Category
+Premium Pension Limited,9.030531,7.476589,4,"Awgu Close, Off Faskari Crescent","Premium Pension Limited, 4 Awgu Close, Off Faskari Crescent, Area 3 Garki, Abuja, Federal Capital Territory, 900241, Nigeria",Area 3 Garki,Abuja,Federal Capital Territory,900241,Nigeria,NG,NG-FC,Pension
+Burwiz International Limited,9.027424,7.495196,9,Zaria Street,"Burwiz International Limited, 9 Zaria Street, Garki 2, Abuja, Federal Capital Territory, 900247, Nigeria",Garki 2,Abuja,Federal Capital Territory,900247,Nigeria,NG,NG-FC,Consulting
+Premium Pension Limited,9.030531,7.476589,4,"Awgu Close, Off Faskari Crescent","Premium Pension Limited, 4 Awgu Close, Off Faskari Crescent, Area 3 Garki, Abuja, Federal Capital Territory, 900241, Nigeria",Area 3 Garki,Abuja,Federal Capital Territory,900241,Nigeria,NG,NG-FC,Pension
+Burwiz International Limited,9.027424,7.495192,9,Zaria Street,"Burwiz International Limited, 9 Zaria Street, Garki 2, Abuja, Federal Capital Territory, 900247, Nigeria",Garki 2,Abuja,Federal Capital Territory,900247,Nigeria,NG,NG-FC,Consulting
+"Zenith Bank Plc, Maitama Branch",9.0730891,7.4960046,1,Aguiyi Ironsi Street,"Zenith Bank Plc, Maitama Branch, 1 Aguiyi Ironsi Street, Maitama, Abuja, Federal Capital Territory, 900271, Nigeria",Maitama,Abuja,Federal Capital Territory,900271,Nigeria,NG,NG-FC,Bank
+Crystal Palace Hotel,9.0385251,7.5018227,29,Port Harcourt Crescent,"Crystal Palace Hotel, 29 Port Harcourt Crescent, Area 11 Garki, Abuja, Federal Capital Territory, 900247, Nigeria",Area 11 Garki,Abuja,Federal Capital Territory,900247,Nigeria,NG,NG-FC,Hotel
+CSCS,9.0776154,7.4664549,3,Yankari Street,"CSCS, 3 Yankari Street, Wuse 2, Abuja, Federal Capital Territory, 900000, Nigeria",Wuse 2,Abuja,Federal Capital Territory,900000,Nigeria,NG,NG-FC,IT
+
+```
+
+You can download the zipped version of all the files [here](#).
 
 
