@@ -374,15 +374,15 @@ If an error is encountered, the **```onError()```** handler of the JQuery Ajax d
 ###**Server Side Scripting**
 ----------
 
-####_**PROCESS - PHP**_
+####_**Upload Script - PHP**_
 
 In order to process the file upload using the **PHP** Script, we purposely added an ***Cross-Origin Request Sharing (CORS)*** domain permission. If you are implementing this script and decide to Use absolute url for the script such as 
 
-```http://abc.com/asset/UploadScript.php```
+http://abc.com/asset/UploadScript.php  
 
-instead of the relative URL
+instead of the relative URL  
 
-```asset/ UploadScript.php```
+asset/UploadScript.php    
 
 then the Cross-Origin Request Sharing permission becomes critical otherwise your script will encounter error. That, said, letâ€™s see how our **PHP** Script header will look like.
 
