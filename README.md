@@ -15,16 +15,16 @@ In doing so, you might want to put some checks in place to ensure **reliability,
 
 The following technologies have been used in this tutorial
 
- - *Programming Language (Server Side)* â€“ **PHP**
- - *Programming Language (Client Side)* â€“ JavaScript 
- - *Database* â€“ **MySQL** 
- - *Styling* â€“ **CSS3**
- - *Asynchronous Query Method* â€“ **JQuery Ajax**
+ - *Programming Language (Server Side)*  **PHP**
+ - *Programming Language (Client Side)*  **JavaScript **
+ - *Database*  **MySQL** 
+ - *Styling*  **CSS3**
+ - *Asynchronous Query Method*  **JQuery Ajax**
  - *File Upload Method* â€“ **Jquery File Upload**
- - *Browser Support Detection* â€“ **HTML5**
- - *Form Object* â€“ **HTML5â€™s FormData object**
+ - *Browser Support Detection*  **HTML5**
+ - *Form Object*  **HTML5â€™s FormData object**
  - *Objects* - **JavaScript Objects**
- - *Cross Domain Request* â€“ **CORS (Cross-Origin Resource Sharing)**
+ - *Cross Domain Request*  **CORS (Cross-Origin Resource Sharing)**
 
 
 ###Specifications
@@ -34,7 +34,7 @@ The following technologies have been used in this tutorial
 ####_**Unique Column**_
 Uploading large volumes of _**Geo-coded**_ information or data onto a database will require _**high precision and accuracy**_ to ensure duplication is eliminated. Though when querying databases, specific query syntax such as _**DISTINCT**_ can be added to eliminate possibilities of duplicates, however, it will make no sense to have large volumes of repeated rows residing in the database table. 
 
-Hence, specific computation column â€œlat_long_sumâ€ have been added and made _**UNIQUE**_ to the Database table **tbl_geo** to ensure that locations are not duplicated.
+Hence, specific computation column **lat_long_sum** have been added and made _**UNIQUE**_ to the Database table **tbl_geo** to ensure that locations are not duplicated.
 
 If you try to upload any same file containing the same data, during insertion into the database table, all the duplicate rows will be ignored.
 
@@ -59,7 +59,7 @@ In order to implement the file upload and database storage via ajax using _**PHP
 This would enable us to understand the process and enhance optimization in the future. The following are the workflow or step by step process.
 
 - 	_Admin User navigates to the page containing the Form for Uploading Geo-coded CSV Data_ 
--	_The Admin User selects the file he wants to upload from the Systemâ€™s local folder and clicks send_
+-	_The Admin User selects the file he wants to upload from the System's local folder and clicks send_
 -	_The Form uses Ajax via to send remote request to the Server Side  PHP Script_
 -	_The Server Side PHP Script processes the request by extracting CSV Data, Store the Data on the Database Server and then Displays the Data for the Admin User to see. The Script also computes the Unique variable to be used on the UNIQUE column._
 -	_The Database Table Unique column ensures that duplicates are skipped during database storage_
