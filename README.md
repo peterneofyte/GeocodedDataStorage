@@ -84,8 +84,11 @@ The resources used in the solution are as follows:
 -	_**css/css.css**_
 -	_**./index.php**_
 
+###**User Interace**
 
-####_**ADMIN USER INPUT HTML**_
+-------------
+
+####_**Admin User Input HTML**_
 
 -------------
 
@@ -157,6 +160,8 @@ Below is the HTML of the Index Page:
 The HTML page index.php has been tested on both Firefox and the Chrome browsers. It may behave differently in other browsers.
 
 
+###**Client Scripting**
+-------------
 
 ####_**JAVASCRIPT (HANDLE UPLOAD)**_
 
@@ -324,6 +329,7 @@ Once the Form Data object is set we **validate** to check if any ***Form Data***
 }
 ```
 ------------
+
 ####***The CallProcess() Function***
 The CallProcess function is the core function responsible for performing the JQuery Ajax query by sending the CSV File to the Server.
 
@@ -371,6 +377,9 @@ Once the **Ajax Call** is successful, the **```onSuccess()```** handler of the J
 
 If an error is encountered, the **```onError()```** handler of the JQuery Ajax displays the error message to the user. The code is shown above.
 
+
+###**Server Side Scripting**
+----------
 
 ####_**PROCESS - PHP**_
 
@@ -558,6 +567,11 @@ function InsertStmt($arr){
 }
 ```
 Finally, the File Upload Script sends response back to the JQuery Ajax that displays the response to the user. 
+
+------------
+
+####**Storage**
+------------
 
 ####_**THE DATABASE TABLE**_
 
