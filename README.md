@@ -1211,6 +1211,40 @@ CSCS,9.0776154,7.4664549,3,Yankari Street,"CSCS, 3 Yankari Street, Wuse 2, Abuja
 
 ```
 
+##**The Database Table Script**
+```
+CREATE TABLE `tbl_geo` (
+  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
+  `place` varchar(100) DEFAULT NULL,
+  `latitude` double(20,7) DEFAULT NULL,
+  `longitude` double(15,7) DEFAULT NULL,
+  `lat_long_sum` double(15,7) DEFAULT NULL,
+  `street_number` varchar(20) DEFAULT NULL,
+  `street_name` varchar(100) DEFAULT NULL,
+  `address` varchar(300) DEFAULT NULL,
+  `municipal` varchar(100) DEFAULT NULL,
+  `city` varchar(100) DEFAULT NULL,
+  `state` varchar(100) DEFAULT NULL,
+  `postcode` varchar(20) DEFAULT NULL,
+  `country` varchar(100) DEFAULT NULL,
+  `iso31662` varchar(20) DEFAULT NULL,
+  `iso31662sub` varchar(20) DEFAULT NULL,
+  `category` varchar(50) DEFAULT NULL,
+  `date_added` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+  `date_updated` datetime DEFAULT NULL,
+  `updated_by` varchar(20) DEFAULT 'Peter Edwards',
+  `signature` varchar(15) DEFAULT NULL,
+  `activated` varchar(20) DEFAULT 'ACTIVE',
+  `geohash` varchar(50) DEFAULT NULL,
+  `default_pic` varchar(100) DEFAULT NULL,
+  `default_pic_caption` varchar(100) DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `lat_long_sum` (`lat_long_sum`),
+  UNIQUE KEY `lat_long_sum_2` (`lat_long_sum`),
+  UNIQUE KEY `lat_long_sum_3` (`lat_long_sum`)
+) ENGINE=InnoDB AUTO_INCREMENT=1046 DEFAULT CHARSET=latin1;
+```
+
 You can download the zipped version of all the files [here](#).
 
 
