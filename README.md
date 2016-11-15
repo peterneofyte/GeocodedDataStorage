@@ -606,7 +606,7 @@ Thirdly, the PHP Server Side script checks to ensure that the file size is withi
 And finally, a specific Computed UNIQUE column is implemented at the PHP Server Side Code level and at the Database table level to ensure that duplicates are eliminated during database storage.
 
 
-###All The Codes
+#**All The Codes**
 
 ------
 The following below are all the codes used in this solution. The file structure is as follows
