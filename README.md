@@ -1,5 +1,5 @@
 ##**Upload & Store Geocoded Dataset with JQuery & PHP/MySQL**
--------------
+
 
 ### Introduction
 -------------
