@@ -36,7 +36,7 @@ The following technologies have been used in this tutorial
 
 -------------
 
-####**Unique Column**
+####_**Unique Column**_
 Uploading large volumes of _**Geo-coded**_ information or data onto a database will require _**high precision and accuracy**_ to ensure duplication is eliminated. Though when querying databases, specific query syntax such as _**DISTINCT**_ can be added to eliminate possibilities of duplicates, however, it will make no sense to have large volumes of repeated rows residing in the database table. 
 
 Hence, specific computation column â€œlat_long_sumâ€ have been added and made _**UNIQUE**_ to the Database table **tbl_geo** to ensure that locations are not duplicated.
@@ -59,7 +59,7 @@ The Admin User that would upload the Geo-coded CSV data would love to see a samp
 
 -------------
 
-####**Unique Column**
+####_**Workflow**_
 
 In order to implement the file upload and database storage via ajax using _**PHP, JavaScript & JQuery**_, it is essential to think through the workflow. 
 
@@ -72,7 +72,7 @@ This would enable us to understand the process and enhance optimization in the f
 -	_The Database Table Unique column ensures that duplicates are skipped during database storage_
 
 
-####**Resources**
+####_**Resources**_
 
 -------------
 
@@ -85,11 +85,11 @@ The resources used in the solution are as follows:
 -	_**./index.php**_
 
 
-####**ADMIN USER INPUT HTML**
+####_**ADMIN USER INPUT HTML**_
 
 -------------
 
-#####**./index.php**
+#####_**./index.php**_
 The HTML form is a **HTML5** compliant form which the Admin User uses to upload the Geo-coded CSV data. The form ```<form>``` is a **multi-part/form-data compliant form**. It must have a **POST** method attribute and an **enctype** method attribute. The id and name attributes of the form is **_iForm_**.
 
 Below is the HTML of the Index Page:
@@ -158,7 +158,7 @@ The HTML page index.php has been tested on both Firefox and the Chrome browsers.
 
 
 
-####**JAVASCRIPT (HANDLE UPLOAD)**
+####_**JAVASCRIPT (HANDLE UPLOAD)**_
 
 ------------
 
@@ -372,7 +372,7 @@ Once the **Ajax Call** is successful, the **```onSuccess()```** handler of the J
 If an error is encountered, the **```onError()```** handler of the JQuery Ajax displays the error message to the user. The code is shown above.
 
 
-####**PROCESS - PHP**
+####_**PROCESS - PHP**_
 
 ----------
 
@@ -559,7 +559,7 @@ function InsertStmt($arr){
 ```
 Finally, the File Upload Script sends response back to the JQuery Ajax that displays the response to the user. 
 
-####**THE DATABASE TABLE**
+####_**THE DATABASE TABLE**_
 
 ------------
 
