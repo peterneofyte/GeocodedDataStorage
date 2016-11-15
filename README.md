@@ -3,7 +3,7 @@
 ### Introduction
 -------------
 
-This documentation demonstrates how to upload a Geocoded Address Data, Store the data in the Database and Display the Data to the User
+This documentation demonstrates how to build a PHP/JQuery web application that uploads a Geocoded Address Data in CSV format, Store the data in MySQL Database and Display the Data Uploaded to the User.
 
 When building a **Geocoded Address Database** you will need to extract the Geocoded data from a CSV file and store the data into a database for permanent storage. To accomplish this you will need to use a programming language to enable automated extraction of the data from CSV format and store them exactly as you want it into a Database.
 
