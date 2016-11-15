@@ -10,9 +10,6 @@ When building a **Geocoded Address Database** you will need to extract the Geoco
 In doing so, you might want to put some checks in place to ensure **reliability, authenticity and non-duplication** of data. Here we cover the basics, though a little extensively. You can also modify or add to this exposition in order to meet your desired needs.
 
 
-----------
-
-
 ###Technologies Implemented
 -------------
 
@@ -29,7 +26,6 @@ The following technologies have been used in this tutorial
  - *Objects* - **JavaScript Objects**
  - *Cross Domain Request* â€“ **CORS (Cross-Origin Resource Sharing)**
 
--------------
 
 ###Specifications
 
@@ -42,7 +38,6 @@ Hence, specific computation column â€œlat_long_sumâ€ have been added an
 
 If you try to upload any same file containing the same data, during insertion into the database table, all the duplicate rows will be ignored.
 
--------------
 
 ###Display Uploaded Data To User
 
@@ -52,7 +47,6 @@ The Admin User that would upload the Geo-coded CSV data would love to see a samp
 
 **Note: ** Any duplicate in the uploaded data displayed will be ignored when it is being stored in the database. This will be shown to the User.
 
--------------
 
 ###Implementing the Solution
 
@@ -321,7 +315,7 @@ Once the Form Data object is set we **validate** to check if any ***Form Data***
 	//**********************************
 }
 ```
-------------
+
 
 ####***The CallProcess() Function***
 The CallProcess function is the core function responsible for performing the JQuery Ajax query by sending the CSV File to the Server.
@@ -559,7 +553,6 @@ function InsertStmt($arr){
 ```
 Finally, the File Upload Script sends response back to the JQuery Ajax that displays the response to the user. 
 
-------------
 
 ####**Storage**
 ------------
