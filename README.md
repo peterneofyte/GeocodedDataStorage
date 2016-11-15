@@ -1,6 +1,5 @@
 ##**Upload & Store Geocoded Dataset with JQuery & PHP/MySQL**
 
-
 ### Introduction
 -------------
 
@@ -74,8 +73,6 @@ This would enable us to understand the process and enhance optimization in the f
 
 ####_**Resources**_
 
--------------
-
 The resources used in the solution are as follows:
 
 -	**_js/jquery-1.11.1.js_**
@@ -89,8 +86,6 @@ The resources used in the solution are as follows:
 -------------
 
 ####_**Admin User Input HTML**_
-
--------------
 
 #####_**./index.php**_
 The HTML form is a **HTML5** compliant form which the Admin User uses to upload the Geo-coded CSV data. The form ```<form>``` is a **multi-part/form-data compliant form**. It must have a **POST** method attribute and an **enctype** method attribute. The id and name attributes of the form is **_iForm_**.
@@ -164,8 +159,6 @@ The HTML page index.php has been tested on both Firefox and the Chrome browsers.
 -------------
 
 ####_**JAVASCRIPT (HANDLE UPLOAD)**_
-
-------------
 
 Letâ€™s examine what happens behind the scene on the _**Client Side**_ when the Admin User clicks on _**Upload**_ button. We will be working with _**JavaScript & JQuery Ajax**_ methods.
 
@@ -383,8 +376,6 @@ If an error is encountered, the **```onError()```** handler of the JQuery Ajax d
 
 ####_**PROCESS - PHP**_
 
-----------
-
 In order to process the file upload using the **PHP** Script, we purposely added an ***Cross-Origin Request Sharing (CORS)*** domain permission. If you are implementing this script and decide to Use absolute url for the script such as 
 
 ```http://abc.com/asset/UploadScript.php```
@@ -574,8 +565,6 @@ Finally, the File Upload Script sends response back to the JQuery Ajax that disp
 ------------
 
 ####_**THE DATABASE TABLE**_
-
-------------
 
 The Database Table is shown below. Run this script to install the database table to your database.
 
